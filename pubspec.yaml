@@ -1,5 +1,5 @@
 name: trackly
-description: "A Flutter tracking application for Android and iOS"
+description: "تطبيق شامل للمتابعة والتنبيهات - RSS، المنتجات، GitHub"
 publish_to: 'none'
 
 version: 1.0.0+1
@@ -14,35 +14,74 @@ dependencies:
   # State management
   provider: ^6.1.1
   
-  # UI components
+  # UI components & Material 3
   cupertino_icons: ^1.0.6
+  google_fonts: ^6.1.0
   
-  # HTTP requests
+  # HTTP requests & API
   http: ^1.1.0
+  dio: ^5.4.0
   
   # Local storage
   shared_preferences: ^2.2.2
+  sqflite: ^2.3.0
+  path: ^1.8.3
+  
+  # RSS parsing
+  xml: ^6.4.2
+  html: ^0.15.4
   
   # Date and time handling
   intl: ^0.19.0
+  
+  # URLs and web scraping
+  url_launcher: ^6.2.1
+  webview_flutter: ^4.4.2
+  
+  # Authentication & Security
+  firebase_core: ^2.24.2
+  firebase_auth: ^4.15.3
+  google_sign_in: ^6.1.6
+  
+  # Push notifications
+  firebase_messaging: ^14.7.10
+  flutter_local_notifications: ^16.3.0
+  
+  # Cloud storage
+  firebase_storage: ^11.5.6
+  
+  # Charts and analytics
+  fl_chart: ^0.65.0
+  
+  # Image handling
+  cached_network_image: ^3.3.0
+  
+  # JSON handling
+  json_annotation: ^4.8.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
+  json_serializable: ^6.7.1
+  build_runner: ^2.4.7
 
 flutter:
   uses-material-design: true
+  
+  # Add Rubik font
+  fonts:
+    - family: Rubik
+      fonts:
+        - asset: assets/fonts/Rubik-Regular.ttf
+        - asset: assets/fonts/Rubik-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Rubik-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Rubik-Light.ttf
+          weight: 300
 
   # Assets
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
-
-  # Fonts
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
+  assets:
+    - assets/images/
+    - assets/icons/

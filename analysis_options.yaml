@@ -12,6 +12,10 @@ linter:
     - use_key_in_widget_constructors
 
 analyzer:
+  errors:
+    unused_field: ignore
+    deprecated_member_use: ignore
+    avoid_print: ignore
   exclude:
     - "**/*.g.dart"
     - "**/*.freezed.dart"
