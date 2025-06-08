@@ -152,34 +152,34 @@ class EnhancedProductCard extends StatelessWidget {
                 ),
               ),
             if (showAdvancedFeatures && product.hasActiveCoupons)
-              PopupMenuItem(
+              const PopupMenuItem(
                 value: 'coupons',
                 child: Row(
                   children: [
                     Icon(Icons.local_offer, color: Colors.green),
-                    const SizedBox(width: 8),
-                    const Text('View Coupons'),
+                    SizedBox(width: 8),
+                    Text('View Coupons'),
                   ],
                 ),
               ),
             if (showAdvancedFeatures && product.similarProducts.isNotEmpty)
-              PopupMenuItem(
+              const PopupMenuItem(
                 value: 'similar',
                 child: Row(
                   children: [
                     Icon(Icons.recommend, color: Colors.blue),
-                    const SizedBox(width: 8),
-                    const Text('Similar Products'),
+                    SizedBox(width: 8),
+                    Text('Similar Products'),
                   ],
                 ),
               ),
-            PopupMenuItem(
+            const PopupMenuItem(
               value: 'delete',
               child: Row(
                 children: [
                   Icon(Icons.delete, color: Colors.red),
-                  const SizedBox(width: 8),
-                  const Text('Delete'),
+                  SizedBox(width: 8),
+                  Text('Delete'),
                 ],
               ),
             ),
@@ -336,7 +336,7 @@ class EnhancedProductCard extends StatelessWidget {
           const SizedBox(height: 4),
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.auto_graph,
                 size: 16,
                 color: Colors.purple,
@@ -450,7 +450,7 @@ class EnhancedProductCard extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.star, size: 14, color: Colors.amber),
+          const Icon(Icons.star, size: 14, color: Colors.amber),
           const SizedBox(width: 4),
           Text(
             '${reviews.averageRating.toStringAsFixed(1)} (${reviews.totalReviews})',
