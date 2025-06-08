@@ -52,6 +52,10 @@ class AppProvider extends ChangeNotifier {
   String get accentColor => _accentColor;
   bool get compactMode => _compactMode;
 
+  // Convenience getters
+  bool get isDarkMode => _themeMode == ThemeMode.dark;
+  bool get isArabic => _locale.languageCode == 'ar';
+
   AppProvider() {
     _loadSettings();
   }
@@ -252,7 +256,19 @@ class AppProvider extends ChangeNotifier {
     await _loadSettings();
   }
 
-  void toggleTheme() {}
+  void toggleTheme() {
+    if (_themeMode == ThemeMode.dark) {
+      setThemeMode(ThemeMode.light);
+    } else {
+      setThemeMode(ThemeMode.dark);
+    }
+  }
 
-  void toggleLanguage() {}
+  void toggleLanguage() {
+    if (_locale.languageCode == 'ar') {
+      setLocale(const Locale('en', 'US'));
+    } else {
+      setLocale(const Locale('ar', 'SA'));
+    }
+  }
 }

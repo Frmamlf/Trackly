@@ -28,7 +28,7 @@ class SettingsScreen extends StatelessWidget {
                 // Theme setting
                 Consumer<AppProvider>(
                   builder: (context, appProvider, child) {
-                    return SwitchListTile(
+                    return ListTile(
                       leading: Icon(
                         appProvider.isDarkMode ? Icons.dark_mode : Icons.light_mode,
                       ),
@@ -36,8 +36,10 @@ class SettingsScreen extends StatelessWidget {
                       subtitle: Text(isArabic 
                           ? 'تبديل بين الوضع المظلم والفاتح'
                           : 'Switch between dark and light theme'),
-                      value: appProvider.isDarkMode,
-                      onChanged: (value) => appProvider.toggleTheme(),
+                      trailing: Switch(
+                        value: appProvider.isDarkMode,
+                        onChanged: (value) => appProvider.toggleTheme(),
+                      ),
                     );
                   },
                 ),
@@ -47,14 +49,16 @@ class SettingsScreen extends StatelessWidget {
                 // Language setting
                 Consumer<AppProvider>(
                   builder: (context, appProvider, child) {
-                    return SwitchListTile(
+                    return ListTile(
                       leading: const Icon(Icons.language),
                       title: Text(isArabic ? 'اللغة العربية' : 'Arabic Language'),
                       subtitle: Text(isArabic 
                           ? 'تبديل بين العربية والإنجليزية'
                           : 'Switch between Arabic and English'),
-                      value: appProvider.isArabic,
-                      onChanged: (value) => appProvider.toggleLanguage(),
+                      trailing: Switch(
+                        value: appProvider.isArabic,
+                        onChanged: (value) => appProvider.toggleLanguage(),
+                      ),
                     );
                   },
                 ),

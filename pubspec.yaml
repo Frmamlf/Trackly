@@ -45,7 +45,7 @@ dependencies:
   
   # Push notifications
   firebase_messaging: ^14.7.10
-  flutter_local_notifications: ^16.3.0
+  # flutter_local_notifications: ^16.3.0
   
   # Cloud storage
   firebase_storage: ^11.5.6
@@ -68,18 +68,6 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-  
-  # Add Rubik font
-  fonts:
-    - family: Rubik
-      fonts:
-        - asset: assets/fonts/Rubik-Regular.ttf
-        - asset: assets/fonts/Rubik-Medium.ttf
-          weight: 500
-        - asset: assets/fonts/Rubik-Bold.ttf
-          weight: 700
-        - asset: assets/fonts/Rubik-Light.ttf
-          weight: 300
 
   # Assets
   assets:
