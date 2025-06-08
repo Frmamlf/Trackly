@@ -1,4 +1,4 @@
-package com.trackly.trackly_new
+package com.trackly.trackly
 
 import io.flutter.embedding.android.FlutterActivity
 
