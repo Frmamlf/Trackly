@@ -1,5 +1,5 @@
 name: trackly
-description: "تطبيق شامل للمتابعة والتنبيهات - RSS، المنتجات، GitHub"
+description: "Comprehensive Product Price Tracker and GitHub Repository Monitor with Advanced Analytics"
 publish_to: 'none'
 
 version: 1.0.0+1
@@ -65,6 +65,7 @@ dev_dependencies:
   flutter_lints: ^3.0.0
   json_serializable: ^6.7.1
   build_runner: ^2.4.7
+  flutter_launcher_icons: ^0.13.1
 
 flutter:
   uses-material-design: true
@@ -83,3 +84,22 @@ flutter:
           weight: 300
         - asset: assets/fonts/Rubik-Regular.ttf
           weight: 400
+
+# Flutter Launcher Icons Configuration
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/icons/app_icon_512.png"
+  min_sdk_android: 21 # android min sdk min:16, default 21
+  web:
+    generate: true
+    image_path: "assets/icons/app_icon_512.png"
+    background_color: "#6200EA"
+    theme_color: "#6200EA"
+  windows:
+    generate: true
+    image_path: "assets/icons/app_icon_512.png"
+    icon_size: 48 # min:48, max:256, default: 48
+  macos:
+    generate: true
+    image_path: "assets/icons/app_icon_512.png"
