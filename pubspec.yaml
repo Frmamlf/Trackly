@@ -73,3 +73,13 @@ flutter:
   assets:
     - assets/images/
     - assets/icons/
+
+  # Fonts
+  fonts:
+    - family: Rubik
+      fonts:
+        - asset: assets/fonts/Rubik-Variable.ttf
+        - asset: assets/fonts/Rubik-Light.ttf
+          weight: 300
+        - asset: assets/fonts/Rubik-Regular.ttf
+          weight: 400

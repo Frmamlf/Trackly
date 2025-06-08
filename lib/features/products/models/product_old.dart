@@ -68,7 +68,6 @@ class Product {
     this.priceNotificationSettings,
   });
 
-  // Computed properties
   double? get discountPercentage {
     if (originalPrice == null || originalPrice! <= currentPrice) return null;
     return ((originalPrice! - currentPrice) / originalPrice!) * 100;
@@ -82,29 +81,6 @@ class Product {
   bool get isTargetPriceMet {
     if (targetPrice == null) return false;
     return currentPrice <= targetPrice!;
-  }
-
-  bool get isOutOfStock {
-    return !isAvailable || (stockQuantity != null && stockQuantity! <= 0);
-  }
-
-  bool get hasActiveCoupons {
-    return availableCoupons.isNotEmpty && 
-           availableCoupons.any((coupon) => coupon.isValid && 
-           coupon.expiryDate.isAfter(DateTime.now()));
-  }
-
-  double? get bestCompetitorPrice {
-    if (competitorPrices.isEmpty) return null;
-    return competitorPrices
-        .where((cp) => cp.isAvailable)
-        .map((cp) => cp.price)
-        .reduce((a, b) => a < b ? a : b);
-  }
-
-  bool get hasBetterPriceElsewhere {
-    final bestPrice = bestCompetitorPrice;
-    return bestPrice != null && bestPrice < currentPrice;
   }
 
   Product copyWith({
@@ -125,20 +101,6 @@ class Product {
     String? store,
     bool? isAvailable,
     double? originalPrice,
-    // New advanced features
-    bool? hasStockAlert,
-    int? stockQuantity,
-    List<String>? similarProducts,
-    List<CompetitorPrice>? competitorPrices,
-    List<Coupon>? availableCoupons,
-    ProductReviews? reviews,
-    List<String>? alternatives,
-    ShippingInfo? shipping,
-    bool? isLinkedToAccount,
-    String? accountEmail,
-    double? aiPredictedPrice,
-    DateTime? aiPredictionDate,
-    PriceChangeNotification? priceNotificationSettings,
   }) {
     return Product(
       id: id ?? this.id,
@@ -158,19 +120,6 @@ class Product {
       store: store ?? this.store,
       isAvailable: isAvailable ?? this.isAvailable,
       originalPrice: originalPrice ?? this.originalPrice,
-      hasStockAlert: hasStockAlert ?? this.hasStockAlert,
-      stockQuantity: stockQuantity ?? this.stockQuantity,
-      similarProducts: similarProducts ?? this.similarProducts,
-      competitorPrices: competitorPrices ?? this.competitorPrices,
-      availableCoupons: availableCoupons ?? this.availableCoupons,
-      reviews: reviews ?? this.reviews,
-      alternatives: alternatives ?? this.alternatives,
-      shipping: shipping ?? this.shipping,
-      isLinkedToAccount: isLinkedToAccount ?? this.isLinkedToAccount,
-      accountEmail: accountEmail ?? this.accountEmail,
-      aiPredictedPrice: aiPredictedPrice ?? this.aiPredictedPrice,
-      aiPredictionDate: aiPredictionDate ?? this.aiPredictionDate,
-      priceNotificationSettings: priceNotificationSettings ?? this.priceNotificationSettings,
     );
   }
 
@@ -193,20 +142,6 @@ class Product {
       'store': store,
       'isAvailable': isAvailable,
       'originalPrice': originalPrice,
-      // New advanced features
-      'hasStockAlert': hasStockAlert,
-      'stockQuantity': stockQuantity,
-      'similarProducts': similarProducts,
-      'competitorPrices': competitorPrices.map((cp) => cp.toJson()).toList(),
-      'availableCoupons': availableCoupons.map((c) => c.toJson()).toList(),
-      'reviews': reviews?.toJson(),
-      'alternatives': alternatives,
-      'shipping': shipping?.toJson(),
-      'isLinkedToAccount': isLinkedToAccount,
-      'accountEmail': accountEmail,
-      'aiPredictedPrice': aiPredictedPrice,
-      'aiPredictionDate': aiPredictionDate?.toIso8601String(),
-      'priceNotificationSettings': priceNotificationSettings?.toJson(),
     };
   }
 
@@ -231,26 +166,6 @@ class Product {
       store: json['store'] ?? '',
       isAvailable: json['isAvailable'] ?? true,
       originalPrice: json['originalPrice']?.toDouble(),
-      // New advanced features
-      hasStockAlert: json['hasStockAlert'] ?? false,
-      stockQuantity: json['stockQuantity'],
-      similarProducts: List<String>.from(json['similarProducts'] ?? []),
-      competitorPrices: (json['competitorPrices'] as List?)
-          ?.map((cp) => CompetitorPrice.fromJson(cp))
-          .toList() ?? [],
-      availableCoupons: (json['availableCoupons'] as List?)
-          ?.map((c) => Coupon.fromJson(c))
-          .toList() ?? [],
-      reviews: json['reviews'] != null ? ProductReviews.fromJson(json['reviews']) : null,
-      alternatives: List<String>.from(json['alternatives'] ?? []),
-      shipping: json['shipping'] != null ? ShippingInfo.fromJson(json['shipping']) : null,
-      isLinkedToAccount: json['isLinkedToAccount'] ?? false,
-      accountEmail: json['accountEmail'],
-      aiPredictedPrice: json['aiPredictedPrice']?.toDouble(),
-      aiPredictionDate: json['aiPredictionDate'] != null 
-          ? DateTime.parse(json['aiPredictionDate']) : null,
-      priceNotificationSettings: json['priceNotificationSettings'] != null 
-          ? PriceChangeNotification.fromJson(json['priceNotificationSettings']) : null,
     );
   }
 }

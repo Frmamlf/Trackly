@@ -6,7 +6,7 @@ import 'core/theme/app_theme.dart';
 import 'core/providers/app_provider.dart';
 import 'core/providers/auth_provider.dart';
 import 'features/rss/providers/rss_provider.dart';
-import 'features/products/providers/product_provider.dart';
+import 'features/products/providers/enhanced_product_provider.dart';
 import 'features/github/providers/github_provider.dart';
 import 'features/notifications/providers/notification_provider.dart';
 import 'presentation/screens/home/home_screen.dart';
@@ -32,7 +32,7 @@ class TracklyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AppProvider()),
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => RssProvider()),
-        ChangeNotifierProvider(create: (_) => ProductProvider()),
+        ChangeNotifierProvider(create: (_) => EnhancedProductProvider()),
         ChangeNotifierProvider(create: (_) => GitHubProvider()),
         ChangeNotifierProvider(create: (_) => NotificationProvider()),
       ],

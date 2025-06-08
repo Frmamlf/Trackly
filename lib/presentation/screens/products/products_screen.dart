@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../features/products/providers/product_provider.dart';
+import '../../../features/products/providers/enhanced_product_provider.dart';
 import '../../../features/products/models/product.dart';
-import '../../widgets/product_card.dart';
+import '../../widgets/enhanced_product_card.dart';
 import '../../widgets/filter_chips.dart';
 
 class ProductsScreen extends StatefulWidget {
@@ -23,7 +23,7 @@ class _ProductsScreenState extends State<ProductsScreen>
     
     // Load products on init
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<ProductProvider>(context, listen: false).loadProducts();
+      Provider.of<EnhancedProductProvider>(context, listen: false).loadProducts();
     });
   }
 
@@ -35,7 +35,7 @@ class _ProductsScreenState extends State<ProductsScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ProductProvider>(
+    return Consumer<EnhancedProductProvider>(
       builder: (context, productProvider, child) {
         return Column(
           children: [
@@ -73,7 +73,7 @@ class _ProductsScreenState extends State<ProductsScreen>
     );
   }
 
-  Widget _buildAllProductsTab(ProductProvider productProvider) {
+  Widget _buildAllProductsTab(EnhancedProductProvider productProvider) {
     if (productProvider.isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -98,11 +98,12 @@ class _ProductsScreenState extends State<ProductsScreen>
         itemCount: productProvider.filteredProducts.length,
         itemBuilder: (context, index) {
           final product = productProvider.filteredProducts[index];
-          return ProductCard(
+          return EnhancedProductCard(
             product: product,
             onTap: () => _openProduct(product),
             onToggleWishlist: () => productProvider.toggleWishlist(product.id),
             onToggleAlert: () => productProvider.togglePriceAlert(product.id),
+            onToggleStockAlert: () => productProvider.toggleStockAlert(product.id),
             onDelete: () => _deleteProduct(product),
           );
         },
@@ -110,7 +111,7 @@ class _ProductsScreenState extends State<ProductsScreen>
     );
   }
 
-  Widget _buildPriceAlertsTab(ProductProvider productProvider) {
+  Widget _buildPriceAlertsTab(EnhancedProductProvider productProvider) {
     final alertProducts = productProvider.productsWithAlerts;
 
     if (alertProducts.isEmpty) {
@@ -126,11 +127,12 @@ class _ProductsScreenState extends State<ProductsScreen>
       itemCount: alertProducts.length,
       itemBuilder: (context, index) {
         final product = alertProducts[index];
-        return ProductCard(
+        return EnhancedProductCard(
           product: product,
           onTap: () => _openProduct(product),
           onToggleWishlist: () => productProvider.toggleWishlist(product.id),
           onToggleAlert: () => productProvider.togglePriceAlert(product.id),
+          onToggleStockAlert: () => productProvider.toggleStockAlert(product.id),
           onDelete: () => _deleteProduct(product),
           showPriceHistory: true,
         );
@@ -138,7 +140,7 @@ class _ProductsScreenState extends State<ProductsScreen>
     );
   }
 
-  Widget _buildWishlistTab(ProductProvider productProvider) {
+  Widget _buildWishlistTab(EnhancedProductProvider productProvider) {
     final wishlistProducts = productProvider.wishlistProducts;
 
     if (wishlistProducts.isEmpty) {
@@ -154,11 +156,12 @@ class _ProductsScreenState extends State<ProductsScreen>
       itemCount: wishlistProducts.length,
       itemBuilder: (context, index) {
         final product = wishlistProducts[index];
-        return ProductCard(
+        return EnhancedProductCard(
           product: product,
           onTap: () => _openProduct(product),
           onToggleWishlist: () => productProvider.toggleWishlist(product.id),
           onToggleAlert: () => productProvider.togglePriceAlert(product.id),
+          onToggleStockAlert: () => productProvider.toggleStockAlert(product.id),
           onDelete: () => _deleteProduct(product),
         );
       },
@@ -224,7 +227,7 @@ class _ProductsScreenState extends State<ProductsScreen>
           ),
           TextButton(
             onPressed: () {
-              Provider.of<ProductProvider>(context, listen: false)
+              Provider.of<EnhancedProductProvider>(context, listen: false)
                   .deleteProduct(product.id);
               Navigator.pop(context);
             },

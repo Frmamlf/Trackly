@@ -351,4 +351,127 @@ class GitHubProvider extends ChangeNotifier {
         issue.author.toLowerCase().contains(lowercaseQuery)
     ).toList();
   }
+
+  // Star tracking and suggestions
+  Future<void> checkStarChanges() async {
+    for (var repo in _repositories) {
+      try {
+        final updatedRepo = await _fetchRepositoryInfo(repo.owner, repo.name, repo.category);
+        final index = _repositories.indexWhere((r) => r.id == repo.id);
+        if (index != -1) {
+          // Check if stars changed
+          if (updatedRepo.stargazersCount != repo.stargazersCount) {
+            print('Star count changed for ${repo.name}: ${repo.stargazersCount} -> ${updatedRepo.stargazersCount}');
+            // You could trigger a notification here
+          }
+          _repositories[index] = updatedRepo.copyWith(
+            isWatched: repo.isWatched,
+            isStarred: repo.isStarred,
+          );
+        }
+      } catch (e) {
+        print('Error checking stars for ${repo.name}: $e');
+      }
+    }
+    await _saveRepositoriesToStorage();
+    notifyListeners();
+  }
+
+  // AI-powered project suggestions (mock implementation)
+  List<Map<String, dynamic>> suggestSimilarProjects(String repositoryId) {
+    final repo = _repositories.firstWhere((r) => r.id == repositoryId);
+    
+    // Mock AI suggestions based on language and category
+    List<Map<String, dynamic>> suggestions = [];
+    
+    if (repo.language == 'Flutter' || repo.language == 'Dart') {
+      suggestions.addAll([
+        {
+          'name': 'flutter/flutter',
+          'description': 'Flutter makes it easy and fast to build beautiful apps for mobile and beyond',
+          'stars': 165000,
+          'language': 'Dart',
+          'reason': 'Same technology stack'
+        },
+        {
+          'name': 'flame-engine/flame',
+          'description': 'A Flutter based game engine',
+          'stars': 9000,
+          'language': 'Dart',
+          'reason': 'Popular Flutter library'
+        },
+      ]);
+    }
+    
+    if (repo.language == 'JavaScript' || repo.language == 'TypeScript') {
+      suggestions.addAll([
+        {
+          'name': 'facebook/react',
+          'description': 'The library for web and native user interfaces',
+          'stars': 225000,
+          'language': 'JavaScript',
+          'reason': 'Popular JavaScript framework'
+        },
+        {
+          'name': 'microsoft/vscode',
+          'description': 'Visual Studio Code',
+          'stars': 161000,
+          'language': 'TypeScript',
+          'reason': 'Popular TypeScript project'
+        },
+      ]);
+    }
+    
+    if (repo.category == 'Mobile') {
+      suggestions.addAll([
+        {
+          'name': 'ionic-team/ionic-framework',
+          'description': 'A powerful cross-platform UI toolkit',
+          'stars': 51000,
+          'language': 'TypeScript',
+          'reason': 'Similar category'
+        },
+      ]);
+    }
+    
+    // Remove duplicates and limit to 5 suggestions
+    final uniqueSuggestions = suggestions.take(5).toList();
+    return uniqueSuggestions;
+  }
+
+  // Trending repositories discovery
+  Future<List<Map<String, dynamic>>> discoverTrendingRepositories({String? language}) async {
+    // Mock trending repositories (in real app, you'd call GitHub's search API)
+    await Future.delayed(const Duration(seconds: 1)); // Simulate API call
+    
+    List<Map<String, dynamic>> trending = [
+      {
+        'name': 'microsoft/playwright',
+        'description': 'Playwright is a framework for Web Testing and Automation',
+        'stars': 65000,
+        'language': 'TypeScript',
+        'growth': '+2.5k this week'
+      },
+      {
+        'name': 'vercel/next.js',
+        'description': 'The React Framework',
+        'stars': 124000,
+        'language': 'JavaScript',
+        'growth': '+1.8k this week'
+      },
+      {
+        'name': 'flutter/flutter',
+        'description': 'Flutter makes it easy and fast to build beautiful apps',
+        'stars': 165000,
+        'language': 'Dart',
+        'growth': '+1.2k this week'
+      },
+    ];
+    
+    if (language != null) {
+      trending = trending.where((repo) => repo['language'] == language).toList();
+    }
+    
+    return trending;
+  }
 }

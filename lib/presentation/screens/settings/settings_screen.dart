@@ -707,8 +707,8 @@ class SettingsScreen extends StatelessWidget {
 
   void _openAppStore() async {
     // App store URLs for different platforms
-    final androidUrl = 'https://play.google.com/store/apps/details?id=com.trackly.app';
-    final iosUrl = 'https://apps.apple.com/app/trackly/id123456789';
+    const androidUrl = 'https://play.google.com/store/apps/details?id=com.trackly.app';
+    const iosUrl = 'https://apps.apple.com/app/trackly/id123456789';
     
     try {
       String url;
