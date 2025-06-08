@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:trackly/core/providers/auth_provider.dart' show AuthProvider;
-// ignore: unused_import
-import '../../core/providers/auth_provider.dart';
+import '../../../core/providers/auth_provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -147,7 +145,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Text(
-                                      authProvider.error!,
+                                      authProvider.error ?? '',
                                       style: TextStyle(
                                         color: Theme.of(context).colorScheme.onErrorContainer,
                                       ),
