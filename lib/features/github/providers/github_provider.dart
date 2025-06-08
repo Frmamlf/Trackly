@@ -316,6 +316,32 @@ class GitHubProvider extends ChangeNotifier {
     }
   }
 
+  // Load all data
+  Future<void> loadData() async {
+    await loadRepositoriesFromStorage();
+    await loadReleasesFromStorage();
+    await loadIssuesFromStorage();
+    
+    // Refresh all repositories
+    for (var repo in _repositories) {
+      await refreshRepository(repo.id);
+    }
+  }
+
+  // Clear all data
+  Future<void> clearAllData() async {
+    _repositories.clear();
+    _releases.clear();
+    _issues.clear();
+    
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('github_repositories');
+    await prefs.remove('github_releases');
+    await prefs.remove('github_issues');
+    
+    notifyListeners();
+  }
+
   // Search functionality
   List<GitHubRepository> searchRepositories(String query) {
     if (query.isEmpty) return _repositories;

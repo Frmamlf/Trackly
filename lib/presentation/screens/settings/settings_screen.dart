@@ -195,7 +195,7 @@ class SettingsScreen extends StatelessWidget {
                   value: false,
                   onChanged: (value) {
                     // Enable/disable biometric authentication
-                    appProvider.setBiometricEnabled(value);
+                    context.read<AppProvider>().setBiometricEnabled(value);
                   },
                 ),
                 
