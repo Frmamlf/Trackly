@@ -630,4 +630,16 @@ class EnhancedProductProvider extends ChangeNotifier {
         product.alternatives.any((alt) => alt.toLowerCase().contains(lowercaseQuery))
     ).toList();
   }
+
+  // Clear all data
+  Future<void> clearAllData() async {
+    _products.clear();
+    _selectedCategory = 'All';
+    _error = null;
+    
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('products');
+    
+    notifyListeners();
+  }
 }

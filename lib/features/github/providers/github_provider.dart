@@ -318,10 +318,6 @@ class GitHubProvider extends ChangeNotifier {
 
   // Load all data
   Future<void> loadData() async {
-    await loadRepositoriesFromStorage();
-    await loadReleasesFromStorage();
-    await loadIssuesFromStorage();
-    
     // Refresh all repositories
     for (var repo in _repositories) {
       await refreshRepository(repo.id);

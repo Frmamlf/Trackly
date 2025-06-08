@@ -313,4 +313,18 @@ class RssProvider extends ChangeNotifier {
         feed.category.toLowerCase().contains(lowercaseQuery)
     ).toList();
   }
+
+  // Clear all data
+  Future<void> clearAllData() async {
+    _feeds.clear();
+    _articles.clear();
+    _selectedCategory = 'All';
+    _error = null;
+    
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('rss_feeds');
+    await prefs.remove('rss_articles');
+    
+    notifyListeners();
+  }
 }

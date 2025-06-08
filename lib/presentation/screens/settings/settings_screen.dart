@@ -7,7 +7,7 @@ import 'dart:io';
 import '../../../core/providers/app_provider.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../features/rss/providers/rss_provider.dart';
-import '../../../features/products/providers/product_provider.dart';
+import '../../../features/products/providers/enhanced_product_provider.dart';
 import '../../../features/github/providers/github_provider.dart';
 import '../../../features/notifications/providers/notification_provider.dart';
 
@@ -611,7 +611,7 @@ class SettingsScreen extends StatelessWidget {
       // Reload providers
       if (context.mounted) {
         context.read<RssProvider>().loadFeeds();
-        context.read<ProductProvider>().loadProducts();
+        context.read<EnhancedProductProvider>().loadProducts();
         context.read<GitHubProvider>().loadData();
         context.read<NotificationProvider>().loadNotifications();
       }
@@ -672,7 +672,7 @@ class SettingsScreen extends StatelessWidget {
       // Clear provider data
       if (context.mounted) {
         context.read<RssProvider>().clearAllData();
-        context.read<ProductProvider>().clearAllData();
+        context.read<EnhancedProductProvider>().clearAllData();
         context.read<GitHubProvider>().clearAllData();
         context.read<NotificationProvider>().clearAllNotifications();
       }
