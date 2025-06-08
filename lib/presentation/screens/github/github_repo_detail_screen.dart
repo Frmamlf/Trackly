@@ -23,20 +23,20 @@ class GitHubRepoDetailScreen extends StatelessWidget {
               return PopupMenuButton<String>(
                 onSelected: (value) => _handleMenuAction(context, value, provider),
                 itemBuilder: (context) => [
-                  PopupMenuItem(
+                  const PopupMenuItem(
                     value: 'delete',
                     child: Row(
-                      children: const [
+                      children: [
                         Icon(Icons.delete, color: Colors.red),
                         SizedBox(width: 8),
                         Text('Remove Repository'),
                       ],
                     ),
                   ),
-                  PopupMenuItem(
+                  const PopupMenuItem(
                     value: 'open_github',
                     child: Row(
-                      children: const [
+                      children: [
                         Icon(Icons.open_in_new),
                         SizedBox(width: 8),
                         Text('Open in GitHub'),

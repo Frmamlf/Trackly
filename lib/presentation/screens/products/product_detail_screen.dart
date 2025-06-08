@@ -24,20 +24,20 @@ class ProductDetailScreen extends StatelessWidget {
               return PopupMenuButton<String>(
                 onSelected: (value) => _handleMenuAction(context, value, provider),
                 itemBuilder: (context) => [
-                  PopupMenuItem(
+                  const PopupMenuItem(
                     value: 'delete',
                     child: Row(
-                      children: const [
+                      children: [
                         Icon(Icons.delete, color: Colors.red),
                         SizedBox(width: 8),
                         Text('Delete Product'),
                       ],
                     ),
                   ),
-                  PopupMenuItem(
+                  const PopupMenuItem(
                     value: 'share',
                     child: Row(
-                      children: const [
+                      children: [
                         Icon(Icons.share),
                         SizedBox(width: 8),
                         Text('Share'),

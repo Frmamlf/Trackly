@@ -109,7 +109,7 @@ class GitHubRepoCard extends StatelessWidget {
                       // Delete button
                       if (onDelete != null)
                         IconButton(
-                          icon: Icon(
+                          icon: const Icon(
                             Icons.delete,
                             color: Colors.red,
                           ),

@@ -59,10 +59,10 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 }
               },
               itemBuilder: (BuildContext context) => [
-                PopupMenuItem<String>(
+                const PopupMenuItem<String>(
                   value: 'profile',
                   child: Row(
-                    children: const [
+                    children: [
                       Icon(Icons.account_circle),
                       SizedBox(width: 8),
                       Text('Profile'),
@@ -85,10 +85,10 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                     ],
                   ),
                 ),
-                PopupMenuItem<String>(
+                const PopupMenuItem<String>(
                   value: 'language',
                   child: Row(
-                    children: const [
+                    children: [
                       Icon(Icons.language),
                       SizedBox(width: 8),
                       Text('Language'),
