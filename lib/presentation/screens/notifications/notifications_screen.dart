@@ -317,7 +317,9 @@ class _NotificationsScreenState extends State<NotificationsScreen>
                         : 'Notify when new articles arrive'),
                     value: true,
                     onChanged: (value) {
-                      // TODO: Implement notification settings
+                      // Implement RSS notification settings
+                      final notificationProvider = Provider.of<NotificationProvider>(context, listen: false);
+                      notificationProvider.setRssNotificationsEnabled(value);
                     },
                   ),
                   
@@ -329,7 +331,9 @@ class _NotificationsScreenState extends State<NotificationsScreen>
                         : 'Notify when product prices change'),
                     value: true,
                     onChanged: (value) {
-                      // TODO: Implement notification settings
+                      // Implement price alerts notification settings
+                      final notificationProvider = Provider.of<NotificationProvider>(context, listen: false);
+                      notificationProvider.setPriceAlertsEnabled(value);
                     },
                   ),
                   
@@ -341,7 +345,9 @@ class _NotificationsScreenState extends State<NotificationsScreen>
                         : 'Notify when new releases are published'),
                     value: true,
                     onChanged: (value) {
-                      // TODO: Implement notification settings
+                      // Implement GitHub releases notification settings
+                      final notificationProvider = Provider.of<NotificationProvider>(context, listen: false);
+                      notificationProvider.setGithubReleasesEnabled(value);
                     },
                   ),
                   
@@ -353,7 +359,9 @@ class _NotificationsScreenState extends State<NotificationsScreen>
                         : 'Notify when new issues are created'),
                     value: true,
                     onChanged: (value) {
-                      // TODO: Implement notification settings
+                      // Implement GitHub issues notification settings
+                      final notificationProvider = Provider.of<NotificationProvider>(context, listen: false);
+                      notificationProvider.setGithubIssuesEnabled(value);
                     },
                   ),
                 ],
@@ -386,7 +394,9 @@ class _NotificationsScreenState extends State<NotificationsScreen>
                         : 'Send notifications to device'),
                     value: true,
                     onChanged: (value) {
-                      // TODO: Implement notification settings
+                      // Implement push notifications settings
+                      final notificationProvider = Provider.of<NotificationProvider>(context, listen: false);
+                      notificationProvider.setPushNotificationsEnabled(value);
                     },
                   ),
                   
@@ -398,7 +408,9 @@ class _NotificationsScreenState extends State<NotificationsScreen>
                         : 'Play sound with notifications'),
                     value: true,
                     onChanged: (value) {
-                      // TODO: Implement notification settings
+                      // Implement sound notification settings
+                      final notificationProvider = Provider.of<NotificationProvider>(context, listen: false);
+                      notificationProvider.setSoundEnabled(value);
                     },
                   ),
                   
@@ -410,7 +422,9 @@ class _NotificationsScreenState extends State<NotificationsScreen>
                         : 'Vibrate device with notifications'),
                     value: true,
                     onChanged: (value) {
-                      // TODO: Implement notification settings
+                      // Implement vibration notification settings
+                      final notificationProvider = Provider.of<NotificationProvider>(context, listen: false);
+                      notificationProvider.setVibrationEnabled(value);
                     },
                   ),
                 ],
@@ -639,12 +653,57 @@ class _NotificationsScreenState extends State<NotificationsScreen>
   }
 
   void _openNotificationDetails(NotificationItem notification) {
-    // TODO: Navigate to relevant screen based on notification type
-    Navigator.pushNamed(
-      context,
-      '/notification-details',
-      arguments: notification,
-    );
+    // Navigate to relevant screen based on notification type
+    switch (notification.type) {
+      case NotificationType.rssNewArticle:
+        // Navigate to RSS article
+        if (notification.data?['articleUrl'] != null) {
+          Navigator.pushNamed(
+            context,
+            '/rss-article',
+            arguments: notification.data,
+          );
+        }
+        break;
+      case NotificationType.productPriceAlert:
+        // Navigate to product details
+        if (notification.data?['productUrl'] != null) {
+          Navigator.pushNamed(
+            context,
+            '/product-details',
+            arguments: notification.data,
+          );
+        }
+        break;
+      case NotificationType.githubNewRelease:
+      case NotificationType.githubNewIssue:
+        // Navigate to GitHub item
+        if (notification.data?['repositoryName'] != null) {
+          Navigator.pushNamed(
+            context,
+            '/github-details',
+            arguments: notification.data,
+          );
+        }
+        break;
+      case NotificationType.general:
+      default:
+        // Show notification details dialog
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text(notification.title),
+            content: Text(notification.body),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+        break;
+    }
   }
 
   String _getFilterLabel(NotificationType type, bool isArabic) {

@@ -3,6 +3,9 @@ import 'package:provider/provider.dart';
 // ignore: unused_import
 import '../../../core/providers/app_provider.dart';
 import '../../../core/providers/auth_provider.dart';
+import '../../../features/rss/providers/rss_provider.dart';
+import '../../../features/products/providers/product_provider.dart';
+import '../../../features/github/providers/github_provider.dart';
 import '../rss/rss_screen.dart';
 import '../rss/add_rss_feed_screen.dart';
 import '../products/products_screen.dart';
@@ -282,15 +285,95 @@ class UniversalSearchDelegate extends SearchDelegate {
       children: [
         // Search in RSS feeds
         _buildSectionHeader('RSS Articles'),
-        // TODO: Implement RSS search results
+        Consumer<RssProvider>(
+          builder: (context, rssProvider, child) {
+            final feeds = rssProvider.feeds
+                .where((feed) => feed.title.toLowerCase().contains(query.toLowerCase()) ||
+                               (feed.description?.toLowerCase().contains(query.toLowerCase()) ?? false))
+                .toList();
+            
+            if (feeds.isEmpty) {
+              return const Padding(
+                padding: EdgeInsets.all(16),
+                child: Text('No RSS feeds found'),
+              );
+            }
+            
+            return Column(
+              children: feeds.map((feed) => ListTile(
+                title: Text(feed.title),
+                subtitle: Text(feed.description ?? ''),
+                leading: const Icon(Icons.rss_feed),
+                onTap: () {
+                  close(context, null);
+                  // Navigate to RSS detail
+                },
+              )).toList(),
+            );
+          },
+        ),
         
         // Search in Products
         _buildSectionHeader('Products'),
-        // TODO: Implement product search results
+        Consumer<ProductProvider>(
+          builder: (context, productProvider, child) {
+            final products = productProvider.products
+                .where((product) => product.name.toLowerCase().contains(query.toLowerCase()) ||
+                                  (product.description?.toLowerCase().contains(query.toLowerCase()) ?? false))
+                .toList();
+            
+            if (products.isEmpty) {
+              return const Padding(
+                padding: EdgeInsets.all(16),
+                child: Text('No products found'),
+              );
+            }
+            
+            return Column(
+              children: products.map((product) => ListTile(
+                title: Text(product.name),
+                subtitle: Text(product.description ?? ''),
+                leading: const Icon(Icons.shopping_cart),
+                trailing: Text('\$${product.currentPrice.toStringAsFixed(2)}'),
+                onTap: () {
+                  close(context, null);
+                  // Navigate to product detail
+                },
+              )).toList(),
+            );
+          },
+        ),
         
         // Search in GitHub repositories
         _buildSectionHeader('GitHub Repositories'),
-        // TODO: Implement GitHub search results
+        Consumer<GitHubProvider>(
+          builder: (context, githubProvider, child) {
+            final repos = githubProvider.repositories
+                .where((repo) => repo.name.toLowerCase().contains(query.toLowerCase()) ||
+                               (repo.description?.toLowerCase().contains(query.toLowerCase()) ?? false))
+                .toList();
+            
+            if (repos.isEmpty) {
+              return const Padding(
+                padding: EdgeInsets.all(16),
+                child: Text('No repositories found'),
+              );
+            }
+            
+            return Column(
+              children: repos.map((repo) => ListTile(
+                title: Text(repo.name),
+                subtitle: Text(repo.description ?? ''),
+                leading: const Icon(Icons.code),
+                trailing: Text('⭐ ${repo.stargazersCount}'),
+                onTap: () {
+                  close(context, null);
+                  // Navigate to repo detail
+                },
+              )).toList(),
+            );
+          },
+        ),
       ],
     );
   }

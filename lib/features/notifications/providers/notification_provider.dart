@@ -97,6 +97,15 @@ class NotificationProvider extends ChangeNotifier {
   List<NotificationItem> _notifications = [];
   NotificationType? _selectedFilter;
   bool _isLoading = false;
+  
+  // Notification settings
+  bool _rssNotificationsEnabled = true;
+  bool _priceAlertsEnabled = true;
+  bool _githubReleasesEnabled = true;
+  bool _githubIssuesEnabled = true;
+  bool _pushNotificationsEnabled = true;
+  bool _soundEnabled = true;
+  bool _vibrationEnabled = true;
 
   // Getters
   List<NotificationItem> get notifications => _notifications;
@@ -113,6 +122,11 @@ class NotificationProvider extends ChangeNotifier {
 
   NotificationType? get selectedFilter => _selectedFilter;
   bool get isLoading => _isLoading;
+
+  // Constructor
+  NotificationProvider() {
+    _loadSettings();
+  }
 
   List<NotificationType> get availableFilters {
     final types = _notifications.map((n) => n.type).toSet().toList();
@@ -333,5 +347,88 @@ class NotificationProvider extends ChangeNotifier {
       counts[notification.type] = (counts[notification.type] ?? 0) + 1;
     }
     return counts;
+  }
+
+  // Settings getters
+  bool get rssNotificationsEnabled => _rssNotificationsEnabled;
+  bool get priceAlertsEnabled => _priceAlertsEnabled;
+  bool get githubReleasesEnabled => _githubReleasesEnabled;
+  bool get githubIssuesEnabled => _githubIssuesEnabled;
+  bool get pushNotificationsEnabled => _pushNotificationsEnabled;
+  bool get soundEnabled => _soundEnabled;
+  bool get vibrationEnabled => _vibrationEnabled;
+
+  // Settings setters
+  Future<void> setRssNotificationsEnabled(bool enabled) async {
+    _rssNotificationsEnabled = enabled;
+    await _saveSettings();
+    notifyListeners();
+  }
+
+  Future<void> setPriceAlertsEnabled(bool enabled) async {
+    _priceAlertsEnabled = enabled;
+    await _saveSettings();
+    notifyListeners();
+  }
+
+  Future<void> setGithubReleasesEnabled(bool enabled) async {
+    _githubReleasesEnabled = enabled;
+    await _saveSettings();
+    notifyListeners();
+  }
+
+  Future<void> setGithubIssuesEnabled(bool enabled) async {
+    _githubIssuesEnabled = enabled;
+    await _saveSettings();
+    notifyListeners();
+  }
+
+  Future<void> setPushNotificationsEnabled(bool enabled) async {
+    _pushNotificationsEnabled = enabled;
+    await _saveSettings();
+    notifyListeners();
+  }
+
+  Future<void> setSoundEnabled(bool enabled) async {
+    _soundEnabled = enabled;
+    await _saveSettings();
+    notifyListeners();
+  }
+
+  Future<void> setVibrationEnabled(bool enabled) async {
+    _vibrationEnabled = enabled;
+    await _saveSettings();
+    notifyListeners();
+  }
+
+  // Load and save settings
+  Future<void> _loadSettings() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      _rssNotificationsEnabled = prefs.getBool('rss_notifications_enabled') ?? true;
+      _priceAlertsEnabled = prefs.getBool('price_alerts_enabled') ?? true;
+      _githubReleasesEnabled = prefs.getBool('github_releases_enabled') ?? true;
+      _githubIssuesEnabled = prefs.getBool('github_issues_enabled') ?? true;
+      _pushNotificationsEnabled = prefs.getBool('push_notifications_enabled') ?? true;
+      _soundEnabled = prefs.getBool('sound_enabled') ?? true;
+      _vibrationEnabled = prefs.getBool('vibration_enabled') ?? true;
+    } catch (e) {
+      print('Error loading notification settings: $e');
+    }
+  }
+
+  Future<void> _saveSettings() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('rss_notifications_enabled', _rssNotificationsEnabled);
+      await prefs.setBool('price_alerts_enabled', _priceAlertsEnabled);
+      await prefs.setBool('github_releases_enabled', _githubReleasesEnabled);
+      await prefs.setBool('github_issues_enabled', _githubIssuesEnabled);
+      await prefs.setBool('push_notifications_enabled', _pushNotificationsEnabled);
+      await prefs.setBool('sound_enabled', _soundEnabled);
+      await prefs.setBool('vibration_enabled', _vibrationEnabled);
+    } catch (e) {
+      print('Error saving notification settings: $e');
+    }
   }
 }
