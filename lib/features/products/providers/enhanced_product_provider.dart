@@ -221,7 +221,13 @@ class EnhancedProductProvider extends ChangeNotifier {
         store: store,
         isAvailable: isAvailable,
         stockQuantity: stockQuantity,
-        priceHistory: [PriceHistory(date: DateTime.now(), price: currentPrice, isAvailable: isAvailable)],
+        priceHistory: [PriceHistory(
+          date: DateTime.now(), 
+          price: currentPrice, 
+          currency: 'USD',
+          store: store,
+          isAvailable: isAvailable
+        )],
       );
     } catch (e) {
       throw Exception('Failed to scrape product: $e');
@@ -533,7 +539,13 @@ class EnhancedProductProvider extends ChangeNotifier {
       if (newPrice != null && (newPrice != product.currentPrice || isAvailable != product.isAvailable)) {
         // Add to price history
         final newHistory = List<PriceHistory>.from(product.priceHistory)
-          ..add(PriceHistory(date: DateTime.now(), price: newPrice, isAvailable: isAvailable));
+          ..add(PriceHistory(
+            date: DateTime.now(), 
+            price: newPrice, 
+            currency: product.currency,
+            store: product.store,
+            isAvailable: isAvailable
+          ));
 
         _products[index] = product.copyWith(
           currentPrice: newPrice,

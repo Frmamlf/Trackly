@@ -103,6 +103,11 @@ class GitHubProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  // Alias for removeRepository
+  Future<void> removeRepository(String repositoryId) async {
+    await deleteRepository(repositoryId);
+  }
+  
   Future<void> toggleWatch(String repositoryId) async {
     final index = _repositories.indexWhere((repo) => repo.id == repositoryId);
     if (index != -1) {

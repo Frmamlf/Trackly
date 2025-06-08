@@ -58,7 +58,7 @@ class GitHubRepoDetailScreen extends StatelessWidget {
             const SizedBox(height: 20),
             _buildStatsSection(),
             const SizedBox(height: 20),
-            _buildLatestRelease(),
+            _buildLatestRelease(context),
             const SizedBox(height: 20),
             _buildRepoDetails(),
             const SizedBox(height: 20),
@@ -214,7 +214,7 @@ class GitHubRepoDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildLatestRelease() {
+  Widget _buildLatestRelease(BuildContext context) {
     final release = repository.latestRelease;
     
     return Card(
@@ -322,7 +322,7 @@ class GitHubRepoDetailScreen extends StatelessWidget {
             _buildDetailRow('Created', _formatDate(repository.createdAt)),
             _buildDetailRow('Updated', _formatDate(repository.updatedAt)),
             _buildDetailRow('Size', '${repository.size} KB'),
-            _buildDetailRow('Default Branch', repository.defaultBranch),
+            _buildDetailRow('Default Branch', repository.defaultBranch ?? 'main'),
             if (repository.homepage?.isNotEmpty == true)
               _buildDetailRow('Homepage', repository.homepage!, isLink: true),
           ],
@@ -503,6 +503,15 @@ class GitHubRepoDetailScreen extends StatelessWidget {
       final downloadUrl = release.assets.isNotEmpty 
           ? release.assets.first.downloadUrl 
           : release.tarballUrl;
+
+      if (downloadUrl == null) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('No download URL available')),
+          );
+        }
+        return;
+      }
 
       final uri = Uri.parse(downloadUrl);
       if (await canLaunchUrl(uri)) {

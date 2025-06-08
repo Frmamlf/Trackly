@@ -19,6 +19,12 @@ class GitHubRepository {
   final DateTime? pushedAt;
   final String? defaultBranch;
   final List<String> topics;
+  final String? license;
+  final int watchersCount;
+  final GitHubRelease? latestRelease;
+  final int size;
+  final String? homepage;
+  final List<String> languages;
 
   GitHubRepository({
     required this.id,
@@ -41,6 +47,12 @@ class GitHubRepository {
     this.pushedAt,
     this.defaultBranch,
     this.topics = const [],
+    this.license,
+    this.watchersCount = 0,
+    this.latestRelease,
+    this.size = 0,
+    this.homepage,
+    this.languages = const [],
   });
 
   GitHubRepository copyWith({
@@ -64,6 +76,12 @@ class GitHubRepository {
     DateTime? pushedAt,
     String? defaultBranch,
     List<String>? topics,
+    String? license,
+    int? watchersCount,
+    GitHubRelease? latestRelease,
+    int? size,
+    String? homepage,
+    List<String>? languages,
   }) {
     return GitHubRepository(
       id: id ?? this.id,
@@ -86,6 +104,12 @@ class GitHubRepository {
       pushedAt: pushedAt ?? this.pushedAt,
       defaultBranch: defaultBranch ?? this.defaultBranch,
       topics: topics ?? this.topics,
+      license: license ?? this.license,
+      watchersCount: watchersCount ?? this.watchersCount,
+      latestRelease: latestRelease ?? this.latestRelease,
+      size: size ?? this.size,
+      homepage: homepage ?? this.homepage,
+      languages: languages ?? this.languages,
     );
   }
 
@@ -111,6 +135,12 @@ class GitHubRepository {
       'pushedAt': pushedAt?.toIso8601String(),
       'defaultBranch': defaultBranch,
       'topics': topics,
+      'license': license,
+      'watchersCount': watchersCount,
+      'latestRelease': latestRelease?.toJson(),
+      'size': size,
+      'homepage': homepage,
+      'languages': languages,
     };
   }
 
@@ -138,6 +168,14 @@ class GitHubRepository {
           : null,
       defaultBranch: json['defaultBranch'] ?? json['default_branch'],
       topics: List<String>.from(json['topics'] ?? []),
+      license: json['license'],
+      watchersCount: json['watchersCount'] ?? 0,
+      latestRelease: json['latestRelease'] != null 
+          ? GitHubRelease.fromJson(json['latestRelease']) 
+          : null,
+      size: json['size'] ?? 0,
+      homepage: json['homepage'],
+      languages: List<String>.from(json['languages'] ?? []),
     );
   }
 
@@ -157,6 +195,11 @@ class GitHubRelease {
   final DateTime publishedAt;
   final String author;
   final List<GitHubAsset> assets;
+  final String? tarballUrl;
+  final String? body;
+
+  // Getters for compatibility
+  bool get prerelease => isPrerelease;
 
   GitHubRelease({
     required this.id,
@@ -171,6 +214,8 @@ class GitHubRelease {
     required this.publishedAt,
     required this.author,
     this.assets = const [],
+    this.tarballUrl,
+    this.body,
   });
 
   Map<String, dynamic> toJson() {
@@ -187,6 +232,8 @@ class GitHubRelease {
       'publishedAt': publishedAt.toIso8601String(),
       'author': author,
       'assets': assets.map((asset) => asset.toJson()).toList(),
+      'tarballUrl': tarballUrl,
+      'body': body,
     };
   }
 
@@ -206,6 +253,8 @@ class GitHubRelease {
       assets: (json['assets'] as List?)
           ?.map((asset) => GitHubAsset.fromJson(asset))
           .toList() ?? [],
+      tarballUrl: json['tarballUrl'] ?? json['tarball_url'],
+      body: json['body'] ?? json['description'],
     );
   }
 }

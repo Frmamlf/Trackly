@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../features/products/models/product.dart';
+import '../../features/products/models/advanced_models.dart';
 import '../../core/utils/currency_formatter.dart';
 
 class ProductCard extends StatelessWidget {

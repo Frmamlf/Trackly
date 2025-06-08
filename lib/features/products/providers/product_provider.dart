@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as html_parser;
 import 'dart:convert';
 import '../models/product.dart';
+import '../models/advanced_models.dart';
 
 class ProductProvider extends ChangeNotifier {
   List<Product> _products = [];
@@ -169,7 +170,12 @@ class ProductProvider extends ChangeNotifier {
         addedAt: DateTime.now(),
         lastUpdated: DateTime.now(),
         store: store,
-        priceHistory: [PriceHistory(date: DateTime.now(), price: currentPrice)],
+        priceHistory: [PriceHistory(
+          date: DateTime.now(), 
+          price: currentPrice,
+          currency: 'USD',
+          store: store
+        )],
       );
     } catch (e) {
       throw Exception('Failed to scrape product: $e');
@@ -250,7 +256,12 @@ class ProductProvider extends ChangeNotifier {
       if (newPrice != null && newPrice != product.currentPrice) {
         // Add to price history
         final newHistory = List<PriceHistory>.from(product.priceHistory)
-          ..add(PriceHistory(date: DateTime.now(), price: newPrice));
+          ..add(PriceHistory(
+            date: DateTime.now(), 
+            price: newPrice,
+            currency: product.currency,
+            store: product.store
+          ));
 
         _products[index] = product.copyWith(
           currentPrice: newPrice,

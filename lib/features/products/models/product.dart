@@ -255,30 +255,4 @@ class Product {
   }
 }
 
-class PriceHistory {
-  final DateTime date;
-  final double price;
-  final bool isAvailable;
-
-  PriceHistory({
-    required this.date,
-    required this.price,
-    this.isAvailable = true,
-  });
-
-  Map<String, dynamic> toJson() {
-    return {
-      'date': date.toIso8601String(),
-      'price': price,
-      'isAvailable': isAvailable,
-    };
-  }
-
-  factory PriceHistory.fromJson(Map<String, dynamic> json) {
-    return PriceHistory(
-      date: DateTime.parse(json['date']),
-      price: json['price']?.toDouble() ?? 0.0,
-      isAvailable: json['isAvailable'] ?? true,
-    );
-  }
-}
+// PriceHistory class is now defined in advanced_models.dart

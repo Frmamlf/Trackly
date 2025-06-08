@@ -61,7 +61,7 @@ class PriceChart extends StatelessWidget {
               getTitlesWidget: (value, meta) {
                 final index = value.toInt();
                 if (index >= 0 && index < priceHistory.length) {
-                  final date = priceHistory[index].timestamp;
+                  final date = priceHistory[index].date;
                   return SideTitleWidget(
                     axisSide: meta.axisSide,
                     child: Text(
@@ -151,7 +151,7 @@ class PriceChart extends StatelessWidget {
                 if (index >= 0 && index < priceHistory.length) {
                   final price = priceHistory[index];
                   return LineTooltipItem(
-                    '${price.price.toStringAsFixed(2)} EGP\n${price.timestamp.day}/${price.timestamp.month}/${price.timestamp.year}',
+                    '${price.price.toStringAsFixed(2)} EGP\n${price.date.day}/${price.date.month}/${price.date.year}',
                     const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,

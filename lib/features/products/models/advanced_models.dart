@@ -5,12 +5,14 @@ class PriceHistory {
   final double price;
   final String currency;
   final String store;
+  final bool isAvailable;
 
   PriceHistory({
     required this.date,
     required this.price,
     required this.currency,
     required this.store,
+    this.isAvailable = true,
   });
 
   Map<String, dynamic> toJson() {
@@ -19,6 +21,7 @@ class PriceHistory {
       'price': price,
       'currency': currency,
       'store': store,
+      'isAvailable': isAvailable,
     };
   }
 
@@ -28,6 +31,7 @@ class PriceHistory {
       price: json['price']?.toDouble() ?? 0.0,
       currency: json['currency'] ?? 'USD',
       store: json['store'],
+      isAvailable: json['isAvailable'] ?? true,
     );
   }
 }

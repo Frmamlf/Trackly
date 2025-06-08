@@ -55,7 +55,7 @@ class ProductDetailScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildProductHeader(),
+            _buildProductHeader(context),
             const SizedBox(height: 20),
             _buildPriceSection(),
             const SizedBox(height: 20),
@@ -79,7 +79,7 @@ class ProductDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildProductHeader() {
+  Widget _buildProductHeader(BuildContext context) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
