@@ -687,7 +687,6 @@ class _NotificationsScreenState extends State<NotificationsScreen>
         }
         break;
       case NotificationType.general:
-      default:
         // Show notification details dialog
         showDialog(
           context: context,

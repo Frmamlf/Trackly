@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'dart:convert';
+import 'dart:io';
 import '../../../core/providers/app_provider.dart';
 import '../../../core/providers/auth_provider.dart';
+import '../../../features/rss/providers/rss_provider.dart';
+import '../../../features/products/providers/product_provider.dart';
+import '../../../features/github/providers/github_provider.dart';
+import '../../../features/notifications/providers/notification_provider.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -329,16 +337,10 @@ class SettingsScreen extends StatelessWidget {
             child: Text(isArabic ? 'إلغاء' : 'Cancel'),
           ),
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(context);
-              // TODO: Implement backup functionality
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(isArabic 
-                      ? 'تم إنشاء النسخة الاحتياطية بنجاح'
-                      : 'Backup created successfully'),
-                ),
-              );
+              // Implement backup functionality
+              await _createBackup(context, isArabic);
             },
             child: Text(isArabic ? 'إنشاء' : 'Create'),
           ),
@@ -445,10 +447,284 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  void _openAppStore() {
-    // Open appropriate app store based on platform
-    // This would typically use url_launcher package
-    // For now, we'll show a placeholder message
-    // TODO: Implement actual app store opening with url_launcher
+  Future<void> _createBackup(BuildContext context, bool isArabic) async {
+    try {
+      // Show loading indicator
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const CircularProgressIndicator(),
+              const SizedBox(height: 16),
+              Text(isArabic ? 'جاري إنشاء النسخة الاحتياطية...' : 'Creating backup...'),
+            ],
+          ),
+        ),
+      );
+
+      final prefs = await SharedPreferences.getInstance();
+      final backupData = <String, dynamic>{};
+
+      // Get all stored data
+      final keys = prefs.getKeys();
+      for (final key in keys) {
+        final value = prefs.get(key);
+        if (value != null) {
+          backupData[key] = value;
+        }
+      }
+
+      // Add metadata
+      backupData['backup_timestamp'] = DateTime.now().toIso8601String();
+      backupData['app_version'] = '1.0.0';
+      backupData['backup_type'] = 'full';
+
+      // Convert to JSON
+      final backupJson = json.encode(backupData);
+      
+      // Save backup to preferences with timestamp
+      final backupKey = 'backup_${DateTime.now().millisecondsSinceEpoch}';
+      await prefs.setString(backupKey, backupJson);
+
+      // Close loading dialog
+      Navigator.pop(context);
+
+      // Show success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(isArabic 
+              ? 'تم إنشاء النسخة الاحتياطية بنجاح'
+              : 'Backup created successfully'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      // Close loading dialog if open
+      Navigator.pop(context);
+      
+      // Show error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(isArabic 
+              ? 'حدث خطأ أثناء إنشاء النسخة الاحتياطية'
+              : 'Error creating backup'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future<void> _restoreBackup(BuildContext context, bool isArabic) async {
+    try {
+      // Show loading indicator
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const CircularProgressIndicator(),
+              const SizedBox(height: 16),
+              Text(isArabic ? 'جاري استعادة البيانات...' : 'Restoring data...'),
+            ],
+          ),
+        ),
+      );
+
+      final prefs = await SharedPreferences.getInstance();
+      final keys = prefs.getKeys();
+      
+      // Find the most recent backup
+      String? latestBackupKey;
+      int latestTimestamp = 0;
+      
+      for (final key in keys) {
+        if (key.startsWith('backup_')) {
+          final timestampStr = key.substring(7);
+          final timestamp = int.tryParse(timestampStr) ?? 0;
+          if (timestamp > latestTimestamp) {
+            latestTimestamp = timestamp;
+            latestBackupKey = key;
+          }
+        }
+      }
+
+      if (latestBackupKey == null) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(isArabic 
+                ? 'لم يتم العثور على نسخة احتياطية'
+                : 'No backup found'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+        return;
+      }
+
+      // Get backup data
+      final backupJson = prefs.getString(latestBackupKey);
+      if (backupJson == null) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(isArabic 
+                ? 'النسخة الاحتياطية تالفة'
+                : 'Backup is corrupted'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
+      // Parse backup data
+      final backupData = json.decode(backupJson) as Map<String, dynamic>;
+      
+      // Clear existing data (except backups)
+      final currentKeys = prefs.getKeys().where((key) => !key.startsWith('backup_')).toList();
+      for (final key in currentKeys) {
+        await prefs.remove(key);
+      }
+
+      // Restore data
+      for (final entry in backupData.entries) {
+        if (!entry.key.startsWith('backup_')) {
+          final value = entry.value;
+          if (value is String) {
+            await prefs.setString(entry.key, value);
+          } else if (value is int) {
+            await prefs.setInt(entry.key, value);
+          } else if (value is double) {
+            await prefs.setDouble(entry.key, value);
+          } else if (value is bool) {
+            await prefs.setBool(entry.key, value);
+          } else if (value is List<String>) {
+            await prefs.setStringList(entry.key, value);
+          }
+        }
+      }
+
+      // Reload providers
+      if (context.mounted) {
+        context.read<RssProvider>().loadFeeds();
+        context.read<ProductProvider>().loadProducts();
+        context.read<GitHubProvider>().loadData();
+        context.read<NotificationProvider>().loadNotifications();
+      }
+
+      // Close loading dialog
+      Navigator.pop(context);
+
+      // Show success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(isArabic 
+              ? 'تم استعادة البيانات بنجاح'
+              : 'Data restored successfully'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      // Close loading dialog if open
+      Navigator.pop(context);
+      
+      // Show error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(isArabic 
+              ? 'حدث خطأ أثناء استعادة البيانات'
+              : 'Error restoring data'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future<void> _clearAllData(BuildContext context, bool isArabic) async {
+    try {
+      // Show loading indicator
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const CircularProgressIndicator(),
+              const SizedBox(height: 16),
+              Text(isArabic ? 'جاري حذف البيانات...' : 'Clearing data...'),
+            ],
+          ),
+        ),
+      );
+
+      // Clear SharedPreferences (except backups)
+      final prefs = await SharedPreferences.getInstance();
+      final keys = prefs.getKeys().where((key) => !key.startsWith('backup_')).toList();
+      for (final key in keys) {
+        await prefs.remove(key);
+      }
+
+      // Clear provider data
+      if (context.mounted) {
+        context.read<RssProvider>().clearAllData();
+        context.read<ProductProvider>().clearAllData();
+        context.read<GitHubProvider>().clearAllData();
+        context.read<NotificationProvider>().clearAllNotifications();
+      }
+
+      // Close loading dialog
+      Navigator.pop(context);
+
+      // Show success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(isArabic 
+              ? 'تم حذف جميع البيانات'
+              : 'All data cleared'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      // Close loading dialog if open
+      Navigator.pop(context);
+      
+      // Show error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(isArabic 
+              ? 'حدث خطأ أثناء حذف البيانات'
+              : 'Error clearing data'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  void _openAppStore() async {
+    // App store URLs for different platforms
+    final androidUrl = 'https://play.google.com/store/apps/details?id=com.trackly.app';
+    final iosUrl = 'https://apps.apple.com/app/trackly/id123456789';
+    
+    try {
+      String url;
+      if (Platform.isAndroid) {
+        url = androidUrl;
+      } else if (Platform.isIOS) {
+        url = iosUrl;
+      } else {
+        url = androidUrl; // Default to Android store
+      }
+      
+      if (await canLaunchUrl(Uri.parse(url))) {
+        await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+      }
+    } catch (e) {
+      // Handle error - could show a snackbar or use a fallback method
+    }
   }
 }
