@@ -21,7 +21,7 @@ class BottomNavBar extends StatelessWidget {
         NavigationDestination(
           icon: Icon(Icons.rss_feed_outlined),
           selectedIcon: Icon(Icons.rss_feed),
-          label: 'RSS',
+          label: 'News',
         ),
         NavigationDestination(
           icon: Icon(Icons.shopping_cart_outlined),
@@ -32,11 +32,6 @@ class BottomNavBar extends StatelessWidget {
           icon: Icon(Icons.code_outlined),
           selectedIcon: Icon(Icons.code),
           label: 'GitHub',
-        ),
-        NavigationDestination(
-          icon: Icon(Icons.notifications_outlined),
-          selectedIcon: Icon(Icons.notifications),
-          label: 'Notifications',
         ),
         NavigationDestination(
           icon: Icon(Icons.settings_outlined),

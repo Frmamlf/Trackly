@@ -309,9 +309,9 @@ class _NotificationsScreenState extends State<NotificationsScreen>
                   ),
                   const SizedBox(height: 16),
                   
-                  // RSS notifications
+                  // News notifications
                   SwitchListTile(
-                    title: Text(isArabic ? 'مقالات RSS جديدة' : 'New RSS Articles'),
+                    title: Text(isArabic ? 'مقالات جديدة' : 'New Articles'),
                     subtitle: Text(isArabic 
                         ? 'إشعار عند وصول مقالات جديدة'
                         : 'Notify when new articles arrive'),

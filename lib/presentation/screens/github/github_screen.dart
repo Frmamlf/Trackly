@@ -4,6 +4,7 @@ import '../../../features/github/providers/github_provider.dart';
 import '../../../features/github/models/github_repository.dart';
 import '../../widgets/github_repo_card.dart';
 import '../../widgets/filter_chips.dart';
+import 'github_repo_detail_screen.dart';
 
 class GitHubScreen extends StatefulWidget {
   const GitHubScreen({super.key});
@@ -254,10 +255,11 @@ class _GitHubScreenState extends State<GitHubScreen>
   }
 
   void _openRepository(GitHubRepository repository) {
-    Navigator.pushNamed(
+    Navigator.push(
       context,
-      '/repository',
-      arguments: repository,
+      MaterialPageRoute(
+        builder: (context) => GitHubRepoDetailScreen(repository: repository),
+      ),
     );
   }
 

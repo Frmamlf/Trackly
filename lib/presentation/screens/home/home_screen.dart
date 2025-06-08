@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 // ignore: unused_import
 import '../../../core/providers/app_provider.dart';
-import '../../../core/providers/auth_provider.dart';
 import '../../../features/rss/providers/rss_provider.dart';
 import '../../../features/products/providers/product_provider.dart';
 import '../../../features/github/providers/github_provider.dart';
@@ -33,7 +32,6 @@ class _HomeScreenState extends State<HomeScreen> {
     const RssScreen(),
     const ProductsScreen(),
     const GitHubScreen(),
-    const NotificationsScreen(),
     const SettingsScreen(),
   ];
 
@@ -43,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: CustomAppBar(
         title: _getScreenTitle(),
         onSearchPressed: () => _showSearch(context),
-        onProfilePressed: () => _showProfile(context),
+        onNotificationPressed: () => _showNotifications(context),
       ),
       body: IndexedStack(
         index: _currentIndex,
@@ -64,14 +62,12 @@ class _HomeScreenState extends State<HomeScreen> {
   String _getScreenTitle() {
     switch (_currentIndex) {
       case 0:
-        return 'RSS Reader';
+        return 'News Reader';
       case 1:
         return 'Product Tracker';
       case 2:
         return 'GitHub Tracker';
       case 3:
-        return 'Notifications';
-      case 4:
         return 'Settings';
       default:
         return 'Trackly';
@@ -146,71 +142,12 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _showProfile(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+  void _showNotifications(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const NotificationsScreen(),
       ),
-      builder: (context) => _buildProfileSheet(),
-    );
-  }
-
-  Widget _buildProfileSheet() {
-    return Consumer<AuthProvider>(
-      builder: (context, authProvider, child) {
-        return Container(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              CircleAvatar(
-                radius: 40,
-                backgroundImage: authProvider.currentUser?.photoUrl != null
-                    ? NetworkImage(authProvider.currentUser!.photoUrl!)
-                    : null,
-                child: authProvider.currentUser?.photoUrl == null
-                    ? Text(
-                        authProvider.currentUser?.displayName?.substring(0, 1).toUpperCase() ?? 'U',
-                        style: const TextStyle(fontSize: 24),
-                      )
-                    : null,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                authProvider.currentUser?.displayName ?? 'User',
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
-              Text(
-                authProvider.currentUser?.email ?? '',
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  TextButton.icon(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      Navigator.pushNamed(context, '/profile');
-                    },
-                    icon: const Icon(Icons.person),
-                    label: const Text('Profile'),
-                  ),
-                  TextButton.icon(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      authProvider.signOut();
-                    },
-                    icon: const Icon(Icons.logout),
-                    label: const Text('Sign Out'),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        );
-      },
     );
   }
 }

@@ -5,6 +5,7 @@ enum AuthMethod {
   email,
   google,
   github,
+  facebook,
   apple,
 }
 
@@ -206,9 +207,56 @@ class AuthProvider extends ChangeNotifier {
       await _saveUser();
       _isLoading = false;
       notifyListeners();
+      
+      // Auto-fetch starred repositories after GitHub login
+      await _autoFetchGitHubRepositories();
+      
       return true;
     } catch (e) {
       _error = 'حدث خطأ أثناء تسجيل الدخول بـ GitHub';
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<void> _autoFetchGitHubRepositories() async {
+    try {
+      // This would be implemented with proper GitHub API integration
+      // For now, just simulate the process
+      print('Auto-fetching GitHub starred repositories...');
+      // In a real implementation, you would:
+      // 1. Use the GitHub OAuth token to fetch starred repositories
+      // 2. Add them to the GitHubProvider
+      // 3. Show a success message to the user
+    } catch (e) {
+      print('Failed to auto-fetch GitHub repositories: $e');
+    }
+  }
+
+  Future<bool> signInWithFacebook() async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      // في التطبيق الحقيقي، نستخدم Facebook Login
+      await Future.delayed(const Duration(seconds: 2));
+      
+      _currentUser = User(
+        id: 'facebook_user',
+        email: 'user@facebook.com',
+        name: 'مستخدم Facebook',
+        authMethod: AuthMethod.facebook,
+        createdAt: DateTime.now(),
+      );
+      
+      await _saveUser();
+      _isLoading = false;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _error = 'حدث خطأ أثناء تسجيل الدخول بـ Facebook';
       _isLoading = false;
       notifyListeners();
       return false;

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../features/products/models/product.dart';
+import '../../core/utils/currency_formatter.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;
@@ -133,7 +134,7 @@ class ProductCard extends StatelessWidget {
                         Row(
                           children: [
                             Text(
-                              '\$${product.currentPrice.toStringAsFixed(2)}',
+                              CurrencyFormatter.formatPrice(product.currentPrice, product.currency),
                               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: product.isPriceDropped
@@ -166,7 +167,7 @@ class ProductCard extends StatelessWidget {
                         if (product.originalPrice != null && product.originalPrice! > product.currentPrice) ...[
                           const SizedBox(height: 4),
                           Text(
-                            '\$${product.originalPrice!.toStringAsFixed(2)}',
+                            CurrencyFormatter.formatPrice(product.originalPrice!, product.currency),
                             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                               decoration: TextDecoration.lineThrough,
                               color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
@@ -185,7 +186,7 @@ class ProductCard extends StatelessWidget {
                               ),
                               const SizedBox(width: 4),
                               Text(
-                                'Target: \$${product.targetPrice!.toStringAsFixed(2)}',
+                                'Target: ${CurrencyFormatter.formatPrice(product.targetPrice!, product.currency)}',
                                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                   color: product.isTargetPriceMet ? Colors.green : null,
                                   fontWeight: product.isTargetPriceMet ? FontWeight.bold : null,

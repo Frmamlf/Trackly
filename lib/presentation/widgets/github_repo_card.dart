@@ -7,11 +7,13 @@ import '../../features/github/providers/github_provider.dart';
 class GitHubRepoCard extends StatelessWidget {
   final GitHubRepository repository;
   final VoidCallback? onTap;
+  final VoidCallback? onDelete;
 
   const GitHubRepoCard({
     super.key,
     required this.repository,
     this.onTap,
+    this.onDelete,
   });
 
   @override
@@ -104,6 +106,16 @@ class GitHubRepoCard extends StatelessWidget {
                           );
                         },
                       ),
+                      // Delete button
+                      if (onDelete != null)
+                        IconButton(
+                          icon: Icon(
+                            Icons.delete,
+                            color: Colors.red,
+                          ),
+                          onPressed: onDelete,
+                          tooltip: isArabic ? 'حذف' : 'Delete',
+                        ),
                     ],
                   ),
                 ],

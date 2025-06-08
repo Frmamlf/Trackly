@@ -5,6 +5,8 @@ import '../../../features/rss/models/rss_feed.dart';
 import '../../widgets/rss_feed_card.dart';
 import '../../widgets/rss_article_card.dart';
 import '../../widgets/filter_chips.dart';
+import 'news_article_detail_screen.dart';
+import 'news_feed_detail_screen.dart';
 
 class RssScreen extends StatefulWidget {
   const RssScreen({super.key});
@@ -209,18 +211,20 @@ class _RssScreenState extends State<RssScreen>
   }
 
   void _openArticle(RssArticle article) {
-    Navigator.pushNamed(
+    Navigator.push(
       context,
-      '/article',
-      arguments: article,
+      MaterialPageRoute(
+        builder: (context) => NewsArticleDetailScreen(article: article),
+      ),
     );
   }
 
   void _openFeed(RssFeed feed) {
-    Navigator.pushNamed(
+    Navigator.push(
       context,
-      '/feed',
-      arguments: feed,
+      MaterialPageRoute(
+        builder: (context) => NewsFeedDetailScreen(feed: feed),
+      ),
     );
   }
 
@@ -228,8 +232,8 @@ class _RssScreenState extends State<RssScreen>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Feed'),
-        content: Text('Are you sure you want to delete "${feed.title}"?'),
+        title: const Text('Delete News Feed'),
+        content: Text('Are you sure you want to delete "${feed.title}"? This will also remove all its articles.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -240,7 +244,14 @@ class _RssScreenState extends State<RssScreen>
               Provider.of<RssProvider>(context, listen: false)
                   .deleteFeed(feed.id);
               Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('News feed "${feed.title}" deleted'),
+                  backgroundColor: Colors.green,
+                ),
+              );
             },
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
             child: const Text('Delete'),
           ),
         ],

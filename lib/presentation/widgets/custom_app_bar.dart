@@ -5,14 +5,14 @@ import '../../core/providers/app_provider.dart';
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final VoidCallback? onSearchPressed;
-  final VoidCallback? onProfilePressed;
+  final VoidCallback? onNotificationPressed;
   final List<Widget>? actions;
 
   const CustomAppBar({
     super.key,
     required this.title,
     this.onSearchPressed,
-    this.onProfilePressed,
+    this.onNotificationPressed,
     this.actions,
   });
 
@@ -38,26 +38,66 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 icon: const Icon(Icons.search),
                 tooltip: 'Search',
               ),
-            IconButton(
-              onPressed: () => _toggleTheme(context),
-              icon: Icon(
-                appProvider.themeMode == ThemeMode.dark
-                    ? Icons.light_mode
-                    : Icons.dark_mode,
-              ),
-              tooltip: 'Toggle Theme',
-            ),
-            IconButton(
-              onPressed: () => _toggleLanguage(context),
-              icon: const Icon(Icons.language),
-              tooltip: 'Toggle Language',
-            ),
-            if (onProfilePressed != null)
+            if (onNotificationPressed != null)
               IconButton(
-                onPressed: onProfilePressed,
-                icon: const Icon(Icons.account_circle),
-                tooltip: 'Profile',
+                onPressed: onNotificationPressed,
+                icon: const Icon(Icons.notifications),
+                tooltip: 'Notifications',
               ),
+            PopupMenuButton<String>(
+              onSelected: (value) {
+                switch (value) {
+                  case 'theme':
+                    _toggleTheme(context);
+                    break;
+                  case 'language':
+                    _toggleLanguage(context);
+                    break;
+                  case 'profile':
+                    _showProfile(context);
+                    break;
+                }
+              },
+              itemBuilder: (BuildContext context) => [
+                PopupMenuItem<String>(
+                  value: 'profile',
+                  child: Row(
+                    children: const [
+                      Icon(Icons.account_circle),
+                      SizedBox(width: 8),
+                      Text('Profile'),
+                    ],
+                  ),
+                ),
+                PopupMenuItem<String>(
+                  value: 'theme',
+                  child: Row(
+                    children: [
+                      Icon(
+                        appProvider.themeMode == ThemeMode.dark
+                            ? Icons.light_mode
+                            : Icons.dark_mode,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(appProvider.themeMode == ThemeMode.dark
+                          ? 'Light Mode'
+                          : 'Dark Mode'),
+                    ],
+                  ),
+                ),
+                PopupMenuItem<String>(
+                  value: 'language',
+                  child: Row(
+                    children: const [
+                      Icon(Icons.language),
+                      SizedBox(width: 8),
+                      Text('Language'),
+                    ],
+                  ),
+                ),
+              ],
+              icon: const Icon(Icons.more_vert),
+            ),
             if (actions != null) ...actions!,
             const SizedBox(width: 8),
           ],
@@ -74,6 +114,23 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   void _toggleLanguage(BuildContext context) {
     final appProvider = Provider.of<AppProvider>(context, listen: false);
     appProvider.toggleLanguage();
+  }
+
+  void _showProfile(BuildContext context) {
+    // This will be handled by the parent widget
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Profile'),
+        content: const Text('Profile settings coming soon!'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override

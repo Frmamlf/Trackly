@@ -4,6 +4,7 @@ import '../../../features/products/providers/enhanced_product_provider.dart';
 import '../../../features/products/models/product.dart';
 import '../../widgets/enhanced_product_card.dart';
 import '../../widgets/filter_chips.dart';
+import 'product_detail_screen.dart';
 
 class ProductsScreen extends StatefulWidget {
   const ProductsScreen({super.key});
@@ -207,10 +208,11 @@ class _ProductsScreenState extends State<ProductsScreen>
   }
 
   void _openProduct(Product product) {
-    Navigator.pushNamed(
+    Navigator.push(
       context,
-      '/product',
-      arguments: product,
+      MaterialPageRoute(
+        builder: (context) => ProductDetailScreen(product: product),
+      ),
     );
   }
 

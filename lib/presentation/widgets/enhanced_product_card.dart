@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../features/products/models/product.dart';
+import '../../core/utils/currency_formatter.dart';
 
 class EnhancedProductCard extends StatelessWidget {
   final Product product;
@@ -273,7 +274,7 @@ class EnhancedProductCard extends StatelessWidget {
         Row(
           children: [
             Text(
-              '\$${product.currentPrice.toStringAsFixed(2)}',
+              CurrencyFormatter.formatPrice(product.currentPrice, product.currency),
               style: GoogleFonts.rubik(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
@@ -295,7 +296,7 @@ class EnhancedProductCard extends StatelessWidget {
           Row(
             children: [
               Text(
-                '\$${product.originalPrice!.toStringAsFixed(2)}',
+                CurrencyFormatter.formatPrice(product.originalPrice!, product.currency),
                 style: GoogleFonts.rubik(
                   fontSize: 14,
                   color: theme.colorScheme.onSurfaceVariant,
@@ -324,7 +325,7 @@ class EnhancedProductCard extends StatelessWidget {
         if (product.targetPrice != null) ...[
           const SizedBox(height: 4),
           Text(
-            'Target: \$${product.targetPrice!.toStringAsFixed(2)}',
+            'Target: ${CurrencyFormatter.formatPrice(product.targetPrice!, product.currency)}',
             style: GoogleFonts.rubik(
               fontSize: 12,
               color: theme.colorScheme.onSurfaceVariant,
@@ -342,7 +343,7 @@ class EnhancedProductCard extends StatelessWidget {
               ),
               const SizedBox(width: 4),
               Text(
-                'AI Prediction: \$${product.aiPredictedPrice!.toStringAsFixed(2)}',
+                'AI Prediction: ${CurrencyFormatter.formatPrice(product.aiPredictedPrice!, product.currency)}',
                 style: GoogleFonts.rubik(
                   fontSize: 12,
                   color: Colors.purple,
@@ -372,7 +373,7 @@ class EnhancedProductCard extends StatelessWidget {
       final bestPrice = product.bestCompetitorPrice!;
       final savings = product.currentPrice - bestPrice;
       features.add(_buildFeatureChip(
-        'Save \$${savings.toStringAsFixed(2)}',
+        'Save ${CurrencyFormatter.formatPrice(savings, product.currency)}',
         Icons.compare_arrows,
         Colors.orange,
         onTap: onViewCompetitors,

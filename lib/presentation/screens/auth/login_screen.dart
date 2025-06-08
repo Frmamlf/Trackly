@@ -198,17 +198,34 @@ class _LoginScreenState extends State<LoginScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              _buildSocialButton(
-                                icon: Icons.g_mobiledata,
-                                label: 'Google',
-                                onPressed: () => authProvider.signInWithGoogle(),
+                              Expanded(
+                                child: _buildSocialButton(
+                                  icon: Icons.g_mobiledata,
+                                  label: 'Google',
+                                  onPressed: () => authProvider.signInWithGoogle(),
+                                  color: Colors.red,
+                                ),
                               ),
-                              _buildSocialButton(
-                                icon: Icons.code,
-                                label: 'GitHub',
-                                onPressed: () => authProvider.signInWithGitHub(),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: _buildSocialButton(
+                                  icon: Icons.code,
+                                  label: 'GitHub',
+                                  onPressed: () => authProvider.signInWithGitHub(),
+                                  color: Colors.black,
+                                ),
                               ),
                             ],
+                          ),
+                          const SizedBox(height: 12),
+                          SizedBox(
+                            width: double.infinity,
+                            child: _buildSocialButton(
+                              icon: Icons.facebook,
+                              label: 'Continue with Facebook',
+                              onPressed: () => authProvider.signInWithFacebook(),
+                              color: const Color(0xFF1877F2),
+                            ),
                           ),
                         ],
                       ),
@@ -227,13 +244,15 @@ class _LoginScreenState extends State<LoginScreen> {
     required IconData icon,
     required String label,
     required VoidCallback onPressed,
+    Color? color,
   }) {
     return OutlinedButton.icon(
       onPressed: onPressed,
-      icon: Icon(icon),
+      icon: Icon(icon, color: color),
       label: Text(label),
       style: OutlinedButton.styleFrom(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        side: BorderSide(color: color ?? Theme.of(context).colorScheme.outline),
       ),
     );
   }

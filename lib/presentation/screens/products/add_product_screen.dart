@@ -25,7 +25,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
   bool _isLoading = false;
   String _selectedCurrency = 'USD';
 
-  final List<String> _currencies = ['USD', 'EUR', 'GBP', 'JPY', 'AED', 'SAR'];
+  final List<String> _currencies = ['USD', 'EUR', 'GBP', 'JPY', 'AED', 'SAR', 'EGP'];
   final List<String> _categories = [
     'Electronics',
     'Fashion',
