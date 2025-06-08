@@ -140,6 +140,8 @@ class GitHubRepository {
       topics: List<String>.from(json['topics'] ?? []),
     );
   }
+
+  get notes => null;
 }
 
 class GitHubRelease {

@@ -19,11 +19,7 @@ class _AddGitHubRepoScreenState extends State<AddGitHubRepoScreen> {
   final _formKey = GlobalKey<FormState>();
   final _urlController = TextEditingController();
   final _categoryController = TextEditingController();
-  final _notesController = TextEditingController();
   bool _isLoading = false;
-  bool _watchReleases = true;
-  bool _watchIssues = false;
-  bool _notificationsEnabled = true;
 
   final List<String> _categories = [
     'Frontend',
@@ -47,10 +43,6 @@ class _AddGitHubRepoScreenState extends State<AddGitHubRepoScreen> {
     if (widget.existingRepo != null) {
       _urlController.text = 'https://github.com/${widget.existingRepo!.owner}/${widget.existingRepo!.name}';
       _categoryController.text = widget.existingRepo!.category;
-      _notesController.text = widget.existingRepo!.notes ?? '';
-      _watchReleases = widget.existingRepo!.watchReleases;
-      _watchIssues = widget.existingRepo!.watchIssues;
-      _notificationsEnabled = widget.existingRepo!.notificationsEnabled;
     }
   }
 
@@ -58,7 +50,6 @@ class _AddGitHubRepoScreenState extends State<AddGitHubRepoScreen> {
   void dispose() {
     _urlController.dispose();
     _categoryController.dispose();
-    _notesController.dispose();
     super.dispose();
   }
 
@@ -160,73 +151,6 @@ class _AddGitHubRepoScreenState extends State<AddGitHubRepoScreen> {
                           return null;
                         },
                       ),
-                      const SizedBox(height: 16),
-                      TextFormField(
-                        controller: _notesController,
-                        decoration: const InputDecoration(
-                          labelText: 'Notes (Optional)',
-                          hintText: 'Why are you tracking this repository?',
-                          prefixIcon: Icon(Icons.note),
-                          border: OutlineInputBorder(),
-                        ),
-                        maxLines: 3,
-                        textInputAction: TextInputAction.done,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              // Tracking Options
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Tracking Options',
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      SwitchListTile(
-                        title: const Text('Enable Notifications'),
-                        subtitle: const Text('Get notified of updates'),
-                        value: _notificationsEnabled,
-                        onChanged: (value) {
-                          setState(() {
-                            _notificationsEnabled = value;
-                          });
-                        },
-                        secondary: const Icon(Icons.notifications),
-                      ),
-                      const Divider(),
-                      SwitchListTile(
-                        title: const Text('Watch Releases'),
-                        subtitle: const Text('Get notified of new releases'),
-                        value: _watchReleases,
-                        onChanged: _notificationsEnabled ? (value) {
-                          setState(() {
-                            _watchReleases = value;
-                          });
-                        } : null,
-                        secondary: const Icon(Icons.new_releases),
-                      ),
-                      const Divider(),
-                      SwitchListTile(
-                        title: const Text('Watch Issues'),
-                        subtitle: const Text('Get notified of new issues'),
-                        value: _watchIssues,
-                        onChanged: _notificationsEnabled ? (value) {
-                          setState(() {
-                            _watchIssues = value;
-                          });
-                        } : null,
-                        secondary: const Icon(Icons.bug_report),
-                      ),
                     ],
                   ),
                 ),
@@ -262,15 +186,6 @@ class _AddGitHubRepoScreenState extends State<AddGitHubRepoScreen> {
                         'For private repositories or to avoid rate limits, you may need to configure a GitHub access token in Settings.',
                         style: theme.textTheme.bodySmall,
                       ),
-                      const SizedBox(height: 8),
-                      TextButton.icon(
-                        onPressed: () {
-                          // Navigate to settings or show access token dialog
-                          _showAccessTokenInfo();
-                        },
-                        icon: const Icon(Icons.settings, size: 16),
-                        label: const Text('Configure Access Token'),
-                      ),
                     ],
                   ),
                 ),
@@ -280,16 +195,6 @@ class _AddGitHubRepoScreenState extends State<AddGitHubRepoScreen> {
               // Action Buttons
               Row(
                 children: [
-                  if (!isEditing) ...[
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        onPressed: _isLoading ? null : _testRepo,
-                        icon: const Icon(Icons.preview),
-                        label: const Text('Test Repository'),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                  ],
                   Expanded(
                     child: FilledButton.icon(
                       onPressed: _isLoading ? null : _saveRepo,
@@ -312,80 +217,6 @@ class _AddGitHubRepoScreenState extends State<AddGitHubRepoScreen> {
     );
   }
 
-  void _showAccessTokenInfo() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('GitHub Access Token'),
-        content: const SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('To access private repositories or avoid rate limits:'),
-              SizedBox(height: 12),
-              Text('1. Go to GitHub Settings > Developer settings > Personal access tokens'),
-              SizedBox(height: 8),
-              Text('2. Generate a new token with "repo" permissions'),
-              SizedBox(height: 8),
-              Text('3. Add the token in Trackly Settings > GitHub'),
-              SizedBox(height: 12),
-              Text('Public repositories work without a token, but with limited API calls.'),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Got it'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Future<void> _testRepo() async {
-    if (!_formKey.currentState!.validate()) return;
-
-    setState(() => _isLoading = true);
-
-    try {
-      final githubProvider = context.read<GitHubProvider>();
-      final url = _urlController.text.trim();
-      
-      // Extract owner and repo name from URL
-      final uri = Uri.parse(url);
-      final pathSegments = uri.pathSegments;
-      final owner = pathSegments[0];
-      final repoName = pathSegments[1];
-
-      // Test the repository by trying to fetch its info
-      await githubProvider.testRepository(owner, repoName);
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Repository test successful! ✓'),
-            backgroundColor: Colors.green,
-          ),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to test repository: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
-    }
-  }
-
   Future<void> _saveRepo() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -402,30 +233,19 @@ class _AddGitHubRepoScreenState extends State<AddGitHubRepoScreen> {
       final repoName = pathSegments[1];
       
       if (widget.existingRepo != null) {
-        // Update existing repository
-        final updatedRepo = widget.existingRepo!.copyWith(
-          category: _categoryController.text.trim(),
-          notes: _notesController.text.trim().isEmpty 
-              ? null 
-              : _notesController.text.trim(),
-          watchReleases: _watchReleases,
-          watchIssues: _watchIssues,
-          notificationsEnabled: _notificationsEnabled,
+        // For editing - would need an updateRepository method in provider
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Repository editing not yet implemented'),
+            backgroundColor: Colors.orange,
+          ),
         );
-        
-        await githubProvider.updateRepository(updatedRepo);
       } else {
-        // Add new repository
+        // Add new repository using the correct addRepository signature
         await githubProvider.addRepository(
-          owner: owner,
-          name: repoName,
-          category: _categoryController.text.trim(),
-          notes: _notesController.text.trim().isEmpty 
-              ? null 
-              : _notesController.text.trim(),
-          watchReleases: _watchReleases,
-          watchIssues: _watchIssues,
-          notificationsEnabled: _notificationsEnabled,
+          owner,
+          repoName,
+          _categoryController.text.trim(),
         );
       }
 
@@ -483,7 +303,7 @@ class _AddGitHubRepoScreenState extends State<AddGitHubRepoScreen> {
     if (confirmed == true && mounted) {
       try {
         final githubProvider = context.read<GitHubProvider>();
-        await githubProvider.removeRepository(widget.existingRepo!.id);
+        await githubProvider.deleteRepository(widget.existingRepo!.id);
         
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
