@@ -1,5 +1,37 @@
 // Models for advanced product features
 
+class PriceHistory {
+  final DateTime date;
+  final double price;
+  final String currency;
+  final String store;
+
+  PriceHistory({
+    required this.date,
+    required this.price,
+    required this.currency,
+    required this.store,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'date': date.toIso8601String(),
+      'price': price,
+      'currency': currency,
+      'store': store,
+    };
+  }
+
+  factory PriceHistory.fromJson(Map<String, dynamic> json) {
+    return PriceHistory(
+      date: DateTime.parse(json['date']),
+      price: json['price']?.toDouble() ?? 0.0,
+      currency: json['currency'] ?? 'USD',
+      store: json['store'],
+    );
+  }
+}
+
 class CompetitorPrice {
   final String store;
   final double price;
@@ -7,6 +39,9 @@ class CompetitorPrice {
   final DateTime lastUpdated;
   final String url;
   final bool isAvailable;
+
+  // Getter for compatibility
+  String get storeName => store;
 
   CompetitorPrice({
     required this.store,
@@ -50,6 +85,9 @@ class Coupon {
   final bool isValid;
   final String store;
   final double? minimumPurchase;
+
+  // Getter for compatibility
+  double get discountPercentage => discountType == DiscountType.percentage ? discountValue : 0.0;
 
   Coupon({
     required this.id,
